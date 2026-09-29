@@ -1,4 +1,6 @@
-* text=auto
+# 默认按文本处理并统一 LF 落盘（避免 Windows 上冒出
+# "LF will be replaced by CRLF" 一类警告）
+* text=auto eol=lf
 
 # Windows 批处理必须是 CRLF，否则老版本 cmd 可能出错
 *.bat text eol=crlf
