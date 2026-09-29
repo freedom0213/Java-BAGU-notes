@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Java 八股文笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta name="description" content="Java 后端面试八股文笔记：Spring / JVM / Redis / 分布式 / 消息队列 / MySQL / 计算机网络">
+
+  <!-- 主题：亮色在前，暗色在后并用 disabled 控制，跟随系统自动切换 -->
+  <link rel="stylesheet" href="assets/vue.css">
+  <link rel="stylesheet" href="assets/dark.css" id="theme-dark" disabled>
+  <script>
+    (function () {
+      var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+      function apply(dark) {
+        var el = document.getElementById('theme-dark');
+        if (el) { el.disabled = !dark; }
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      }
+      if (mq) {
+        apply(mq.matches);
+        if (mq.addEventListener) { mq.addEventListener('change', function (e) { apply(e.matches); }); }
+        else if (mq.addListener) { mq.addListener(function (e) { apply(e.matches); }); }
+      } else {
+        apply(false);
+      }
+    })();
+  </script>
+
+  <style>
+    /* ---------- 题目（h4）：带左侧色条，和答案正文明显区分 ---------- */
+    .markdown-section h4 {
+      margin: 1.9em 0 .55em;
+      padding: .4em .75em;
+      font-size: .95em;
+      font-weight: 700;
+      line-height: 1.5;
+      color: #2f855a;
+      background: rgba(66, 185, 131, .09);
+      border-left: 3px solid #42b983;
+      border-radius: 0 5px 5px 0;
+      scroll-margin-top: 70px;
+    }
+    html[data-theme="dark"] .markdown-section h4 {
+      color: #6ee7b7;
+      background: rgba(66, 185, 131, .13);
+      border-left-color: #34d399;
+    }
+
+    /* ---------- 章节标题（h2） ---------- */
+    .markdown-section h2 {
+      margin: 2.2em 0 1em;
+      padding-bottom: .35em;
+      font-size: 1.35em;
+      border-bottom: 2px solid rgba(66, 185, 131, .35);
+      scroll-margin-top: 70px;
+    }
+
+    /* ---------- 小节标题（h3） ---------- */
+    .markdown-section h3 {
+      margin: 1.8em 0 .6em;
+      font-size: 1.06em;
+      color: #2c7a5b;
+      scroll-margin-top: 70px;
+    }
+    html[data-theme="dark"] .markdown-section h3 { color: #7dd3a8; }
+
+    /* ---------- 正文可读性（手机长时间阅读） ---------- */
+    .markdown-section {
+      font-size: 15.5px;
+      line-height: 1.8;
+      word-break: break-word;
+    }
+    .markdown-section p { margin: .5em 0; }
+    .markdown-section code {
+      background: rgba(127, 127, 127, .14);
+      padding: .12em .35em;
+      border-radius: 3px;
+      font-size: .9em;
+    }
+
+    /* ---------- 手机端 ---------- */
+    @media screen and (max-width: 768px) {
+      /* docsify 默认在窄屏给正文加 max-width:80%，430px 屏上白白吃掉 86px，这里放开 */
+      .markdown-section {
+        max-width: 100%;
+        margin: 0;
+        padding: 4px 15px 64px;
+        font-size: 15px;
+      }
+      .markdown-section h4 { margin: 1.6em 0 .5em; padding: .38em .6em; font-size: .93em; }
+      .markdown-section h2 { font-size: 1.25em; }
+    }
+
+    /* 加载占位 */
+    #app > p:first-child:empty::before { content: '加载中…'; }
+  </style>
+</head>
+<body>
+  <div id="app">加载中…</div>
+
+  <script>
+    window.$docsify = {
+      name: 'Java 八股文笔记',
+      loadSidebar: true,
+      subMaxLevel: 0,
+      maxLevel: 4,
+      auto2top: true,
+      notFoundPage: false,
+      coverpage: false,
+      search: {
+        placeholder: '搜索题目，如「三级缓存」',
+        noData: '没有找到相关内容',
+        depth: 3,
+        paths: 'auto'
+      },
+      copyCode: { buttonText: '复制', errorText: '复制失败', successText: '已复制' },
+      pagination: { previousText: '上一篇', nextText: '下一篇', crossChapter: true }
+    };
+  </script>
+  <script src="assets/docsify.min.js"></script>
+  <script src="assets/search.min.js"></script>
+  <script src="assets/docsify-copy-code.min.js"></script>
+  <script src="assets/docsify-pagination.min.js"></script>
+</body>
+</html>
