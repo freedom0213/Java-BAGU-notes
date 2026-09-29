@@ -13,6 +13,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+# Windows 控制台默认按 GBK 输出，这里统一成 UTF-8，避免中文提示乱码
+for _s in (sys.stdout, sys.stderr):
+    if hasattr(_s, 'reconfigure'):
+        try:
+            _s.reconfigure(encoding='utf-8', errors='replace')
+        except Exception:
+            pass
+
 ROOT = Path(__file__).resolve().parent.parent
 
 
