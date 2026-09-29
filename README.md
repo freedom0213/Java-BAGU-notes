@@ -6,7 +6,9 @@
 
 ## 在线阅读
 
-> 站点地址：（GitHub Pages 开通后填入）
+<https://freedom0213.github.io/Java-BAGU-notes/>
+
+> 手机、平板、任何设备直接打开即可，不需要本机开机。
 
 ## 内容分布
 
