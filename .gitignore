@@ -1,6 +1,9 @@
 # 本地预览截图（无头浏览器产物）
 .preview/
 
+# 临时文件
+.tmp/
+
 # Python
 __pycache__/
 *.pyc

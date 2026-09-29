@@ -22,6 +22,26 @@ DOCS = ROOT / 'docs'
 Q_RE = re.compile(r'^#### (.+)$')
 
 
+def harden_breaks(lines: list[str]) -> list[str]:
+    """把答案块里的连续非空行转成 markdown 硬换行（行尾补两个空格）。
+
+    为什么要在这里做：笔记的书写习惯是「一行一个要点」，靠换行分条。
+    但 markdown 里单个换行会被合并成一段，所以必须补行尾双空格。
+    这件事交给构建脚本自动完成，真源 `Java八股.md` 就不需要夹带任何隐藏字符，
+    手写时不用记规则。
+
+    空行 = 真正的段落分隔，保持不动；标题行（# 开头）也不动。
+    """
+    out = []
+    for ln in lines:
+        s = ln.rstrip()
+        if not s or s.startswith('#'):
+            out.append(s)
+        else:
+            out.append(s + '  ')
+    return out
+
+
 def parse(text: str):
     doc_title = 'Java 八股文笔记'
     chapters: list[dict] = []
@@ -80,10 +100,12 @@ def main() -> None:
 
     for i, ch in enumerate(chapters, start=1):
         fname = f'{i:02d}.md'
-        body = '\n'.join(ch['body']).strip() + '\n'
+        body = '\n'.join(harden_breaks(ch['body'])).strip() + '\n'
         content = f'# {ch["title"]}\n\n' + body
         content = re.sub(r'\n{3,}', '\n\n', content)
-        (DOCS / fname).write_text(content, encoding='utf-8')
+        # newline='\n'：强制 LF 落盘，与 .gitattributes 的 eol=lf 保持一致，
+        # 否则 Windows 上会写成 CRLF，每次提交都冒 "LF will be replaced by CRLF" 警告。
+        (DOCS / fname).write_text(content, encoding='utf-8', newline='\n')
 
         total, answered = stats(ch)
         grand_total += total
@@ -93,7 +115,7 @@ def main() -> None:
         index_rows.append(f'| [{ch["title"]}]({fname}) | {total} | {answered} |')
 
     # 侧边栏
-    (DOCS / '_sidebar.md').write_text('\n'.join(sidebar) + '\n', encoding='utf-8')
+    (DOCS / '_sidebar.md').write_text('\n'.join(sidebar) + '\n', encoding='utf-8', newline='\n')
 
     # 首页
     home = [
@@ -113,7 +135,7 @@ def main() -> None:
         '手机上点左上角 ☰ 展开目录、点右上角 🔍 搜索题目；表格里的章节名可直接点开。',
         '',
     ]
-    (DOCS / 'README.md').write_text('\n'.join(home), encoding='utf-8')
+    (DOCS / 'README.md').write_text('\n'.join(home), encoding='utf-8', newline='\n')
 
     # GitHub Pages 用：不让 Jekyll 处理，保住 _sidebar.md
     (DOCS / '.nojekyll').write_text('', encoding='utf-8')

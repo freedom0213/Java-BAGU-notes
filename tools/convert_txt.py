@@ -80,9 +80,9 @@ def convert(text: str) -> str:
             last_kind = 'question'
             continue
 
-        # 5) 正文（答案）。去掉缩进，行尾加两个空格保留作者原本的换行意图
-        body = stripped
-        out.append(body + '  ')
+        # 5) 正文（答案）。只去掉缩进，不写入任何隐藏字符；
+        #    换行如何渲染交给 build.py 统一处理。
+        out.append(stripped)
         last_kind = 'body'
 
     # 收尾：去掉多余空行
@@ -101,7 +101,7 @@ def main() -> None:
     text = src.read_text(encoding='utf-8')
     md = convert(text)
     dst.parent.mkdir(parents=True, exist_ok=True)
-    dst.write_text(md, encoding='utf-8')
+    dst.write_text(md, encoding='utf-8', newline='\n')
 
     # 统计
     chapters = len(re.findall(r'^## ', md, re.M))
