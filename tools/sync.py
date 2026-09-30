@@ -24,6 +24,17 @@ for _s in (sys.stdout, sys.stderr):
 
 ROOT = Path(__file__).resolve().parent.parent
 
+# ============================================================
+# 笔记原文（txt）路径。
+#
+# ★ 这里才是你的真源：平时用记事本 / VSCode 随便哪个编辑器改这个 txt，
+#   双击「同步到GitHub.bat」时脚本会自动把它转换成 Java八股.md 再发布。
+#   Java八股.md 属于自动生成物，不要手改（改了也会被下次同步覆盖）。
+#
+# 换电脑 / 改文件名 / 移动位置时，只改下面这一行即可。
+# ============================================================
+NOTE_TXT = Path(r'C:\Users\freedom\Desktop\java八股2.txt')
+
 
 def run(cmd, check_ok=True):
     print('$ ' + ' '.join(cmd), flush=True)
@@ -45,20 +56,31 @@ def main() -> int:
         print('!! 当前目录还不是 git 仓库，请先执行：git init -b main')
         return 1
 
-    # ---- 1. 重建站点 ----
-    print('== [1/4] 重建站点 ==')
+    # ---- 1. 从 txt 生成真源 ----
+    print('== [1/5] 从笔记原文生成真源 ==')
+    if not NOTE_TXT.exists():
+        print(f'!! 没找到笔记原文：{NOTE_TXT}')
+        print('   为避免出现「以为同步了、其实没更新」，这里直接停下。')
+        print('   如果文件改名或移动过，请修改 tools/sync.py 顶部的 NOTE_TXT。')
+        return 1
+    print(f'原文: {NOTE_TXT}')
+    run([sys.executable, str(ROOT / 'tools' / 'convert_txt.py'),
+         str(NOTE_TXT), str(ROOT / 'Java八股.md')])
+
+    # ---- 2. 重建站点 ----
+    print('\n== [2/5] 重建站点 ==')
     run([sys.executable, str(ROOT / 'tools' / 'build.py')])
 
-    # ---- 2. 暂存 ----
-    print('\n== [2/4] 暂存改动 ==')
+    # ---- 3. 暂存 ----
+    print('\n== [3/5] 暂存改动 ==')
     run(['git', 'add', '-A'])
     status = run(['git', 'status', '--porcelain'], check_ok=False)
     if not status.stdout.strip():
         print('没有检测到任何改动，无需提交。')
         return 0
 
-    # ---- 3. 提交 ----
-    print('\n== [3/4] 提交 ==')
+    # ---- 4. 提交 ----
+    print('\n== [4/5] 提交 ==')
     stamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
     run(['git', 'commit', '-m', f'chore: 更新笔记 {stamp}'])
 
@@ -66,8 +88,8 @@ def main() -> int:
         print('\n（--no-push）已跳过推送。')
         return 0
 
-    # ---- 4. 推送 ----
-    print('\n== [4/4] 推送到 GitHub ==')
+    # ---- 5. 推送 ----
+    print('\n== [5/5] 推送到 GitHub ==')
     remotes = run(['git', 'remote'], check_ok=False).stdout.split()
     if 'origin' not in remotes:
         print('!! 还没有配置远程仓库 origin，已跳过推送。')
