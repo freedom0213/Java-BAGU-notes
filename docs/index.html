@@ -99,6 +99,42 @@
 <body>
   <div id="app">加载中…</div>
 
+  <!-- ─────────────────────────────────────────────────────────────
+       绕过 GitHub Pages 的缓存。
+       Pages 给所有文件强制加的响应头是 Cache-Control: max-age=600（10 分钟），
+       所以同步完立刻刷新时，浏览器拿到的还是旧副本。
+       这里给每个 .md 请求加一个时间戳参数，让它每次都重新取。
+       只影响 .md；css / js 等静态资源照旧走缓存，不受影响。
+       ⚠️ 本段必须在 docsify.min.js 之前执行。
+       ───────────────────────────────────────────────────────────── -->
+  <script>
+    (function () {
+      function bust(url) {
+        if (typeof url !== 'string' || url.indexOf('.md') === -1) return url;
+        return url + (url.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
+      }
+      // docsify v4 拉取 Markdown 走的是 XMLHttpRequest
+      var origOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function (method, url) {
+        var args = Array.prototype.slice.call(arguments);
+        args[1] = bust(url);
+        return origOpen.apply(this, args);
+      };
+      // 兜底：万一有分支走 fetch
+      if (window.fetch) {
+        var origFetch = window.fetch;
+        window.fetch = function (input, init) {
+          if (typeof input === 'string') {
+            input = bust(input);
+          } else if (input && typeof input.url === 'string') {
+            try { input = new Request(bust(input.url), input); } catch (e) { /* 忽略，保持原样 */ }
+          }
+          return origFetch.call(this, input, init);
+        };
+      }
+    })();
+  </script>
+
   <script>
     window.$docsify = {
       name: 'Java 八股文笔记',
